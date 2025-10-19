@@ -13,6 +13,9 @@
 		"seccomp=unconfined",
 		"--volume=${localWorkspaceFolder}:/workspaces/${localWorkspaceFolderBasename}:Z"
 	],
+	"containerEnv": {
+		"GOPATH": "/home/vscode/go"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -24,5 +27,9 @@
 				"go.gopath": "/go"
 			}
 		}
-	}
+	},
+	"features": {
+		"git": "os-provided"
+	},
+	"remoteUser": "vscode"
 }
