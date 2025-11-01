@@ -24,7 +24,7 @@
 			"settings": {
 				"go.toolsManagement.checkForUpdates": "local",
 				"go.useLanguageServer": true,
-				"go.gopath": "/go"
+				"go.gopath": "/home/vscode/go"
 			}
 		}
 	},
