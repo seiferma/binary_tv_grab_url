@@ -22,18 +22,31 @@ var xmltvSingleChannelWeekGzip string
 //go:embed testdata/533-20251005.xml
 var xmltvSingleChannelFirstDay string
 
+//go:embed testdata/368554-20251005.xml
+var xmltvSingleChannelFirstDay2 string
+
 //go:embed testdata/533-20251006.xml
 var xmltvSingleChannelSecondDay string
 
 //go:embed testdata/533-exceptFirstTwo.xml
 var xmltvSingleChannelSkipFirstTwoDays string
 
+//go:embed testdata/twoUrlExpected.xml
+var xmltvExpectedTwoUrls string
+
 // 2025-10-05 12:00:00 UTC
 var TEST_NOW = time.Date(2025, time.October, 5, 12, 00, 00, 0, time.UTC)
 
 func TestGetContentFromUrlWithoutRestrictions(t *testing.T) {
 	testWithExample(xmltvSingleChannelWeek, func(url string) {
-		content, err := getContentForUrl(url, 0, 0, TEST_NOW)
+		request := Request{
+			URLs:         []string{url},
+			LengthInDays: 0,
+			OffsetInDays: 0,
+			GetNowFunc:   func() time.Time { return TEST_NOW },
+		}
+		content, err := getContent(request)
+		//content, err := getContentForUrl(url, 0, 0, TEST_NOW)
 		assert.Nil(t, err)
 		assertXmlEquals(t, xmltvSingleChannelWeek, content)
 	})
@@ -41,7 +54,14 @@ func TestGetContentFromUrlWithoutRestrictions(t *testing.T) {
 
 func TestGetContentFromUrlWithGzipWithoutRestrictions(t *testing.T) {
 	testWithExample(xmltvSingleChannelWeekGzip, func(url string) {
-		content, err := getContentForUrl(url, 0, 0, TEST_NOW)
+		request := Request{
+			URLs:         []string{url},
+			LengthInDays: 0,
+			OffsetInDays: 0,
+			GetNowFunc:   func() time.Time { return TEST_NOW },
+		}
+		content, err := getContent(request)
+		//content, err := getContentForUrl(url, 0, 0, TEST_NOW)
 		assert.Nil(t, err)
 		assertXmlEquals(t, xmltvSingleChannelWeek, content)
 	})
@@ -49,7 +69,14 @@ func TestGetContentFromUrlWithGzipWithoutRestrictions(t *testing.T) {
 
 func TestGetContentFromUrlWithDayLimit(t *testing.T) {
 	testWithExample(xmltvSingleChannelWeek, func(url string) {
-		content, err := getContentForUrl(url, 1, 0, TEST_NOW)
+		request := Request{
+			URLs:         []string{url},
+			LengthInDays: 1,
+			OffsetInDays: 0,
+			GetNowFunc:   func() time.Time { return TEST_NOW },
+		}
+		content, err := getContent(request)
+		//content, err := getContentForUrl(url, 1, 0, TEST_NOW)
 		assert.Nil(t, err)
 		assertXmlEquals(t, xmltvSingleChannelFirstDay, content)
 	})
@@ -57,7 +84,14 @@ func TestGetContentFromUrlWithDayLimit(t *testing.T) {
 
 func TestGetContentFromUrlWithOffset(t *testing.T) {
 	testWithExample(xmltvSingleChannelWeek, func(url string) {
-		content, err := getContentForUrl(url, 0, 2, TEST_NOW)
+		request := Request{
+			URLs:         []string{url},
+			LengthInDays: 0,
+			OffsetInDays: 2,
+			GetNowFunc:   func() time.Time { return TEST_NOW },
+		}
+		content, err := getContent(request)
+		//content, err := getContentForUrl(url, 0, 2, TEST_NOW)
 		assert.Nil(t, err)
 		assertXmlEquals(t, xmltvSingleChannelSkipFirstTwoDays, content)
 	})
@@ -65,9 +99,32 @@ func TestGetContentFromUrlWithOffset(t *testing.T) {
 
 func TestGetContentFromUrlWithOffsetAndLimit(t *testing.T) {
 	testWithExample(xmltvSingleChannelWeek, func(url string) {
-		content, err := getContentForUrl(url, 1, 1, TEST_NOW)
+		request := Request{
+			URLs:         []string{url},
+			LengthInDays: 1,
+			OffsetInDays: 1,
+			GetNowFunc:   func() time.Time { return TEST_NOW },
+		}
+		content, err := getContent(request)
+		//content, err := getContentForUrl(url, 1, 1, TEST_NOW)
 		assert.Nil(t, err)
 		assertXmlEquals(t, xmltvSingleChannelSecondDay, content)
+	})
+}
+
+func TestGetContentFromTwoUrls(t *testing.T) {
+	testWithExample(xmltvSingleChannelFirstDay, func(url1 string) {
+		testWithExample(xmltvSingleChannelFirstDay2, func(url2 string) {
+			request := Request{
+				URLs:         []string{url1, url2},
+				LengthInDays: 1,
+				OffsetInDays: 0,
+				GetNowFunc:   func() time.Time { return TEST_NOW },
+			}
+			content, err := getContent(request)
+			assert.Nil(t, err)
+			assertXmlEquals(t, xmltvExpectedTwoUrls, content)
+		})
 	})
 }
 
@@ -113,5 +170,10 @@ func normalizeXmlTv(xmlString string) (string, error) {
 	if err := xml.Unmarshal([]byte(xmlString), &epg); err != nil {
 		return "", err
 	}
+	epg.Date = &xmltv.Time{Time: TEST_NOW}
+	epg.GeneratorInfoName = nil
+	epg.GeneratorInfoURL = nil
+	epg.SourceInfoName = nil
+	epg.SourceInfoURL = nil
 	return serializeXml(epg)
 }

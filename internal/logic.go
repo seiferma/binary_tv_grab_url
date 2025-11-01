@@ -48,15 +48,36 @@ func getCapabilities() []string {
 }
 
 func getContent(r Request) (string, error) {
-	content := ""
+	xmlDocuments := make([]xmltv.EPG, 0, len(r.URLs))
 	for _, url := range r.URLs {
-		var err error
-		content, err = getContentForUrl(url, r.LengthInDays, r.OffsetInDays, r.GetNowFunc())
+		xmlDocument, err := getContentForUrl(url, r.LengthInDays, r.OffsetInDays, r.GetNowFunc())
 		if err != nil {
 			return "", err
 		}
+		xmlDocuments = append(xmlDocuments, xmlDocument)
 	}
-	return content, nil
+
+	mergedDocument, err := mergeXml(xmlDocuments, r.GetNowFunc())
+	if err != nil {
+		return "", err
+	}
+
+	return serializeXml(mergedDocument)
+}
+
+func mergeXml(xmlDocuments []xmltv.EPG, now time.Time) (xmltv.EPG, error) {
+	result := xmltv.EPG{
+		Date:       &xmltv.Time{Time: now},
+		Channels:   make([]xmltv.Channel, 0),
+		Programmes: make([]xmltv.Programme, 0),
+	}
+
+	for _, doc := range xmlDocuments {
+		result.Channels = append(result.Channels, doc.Channels...)
+		result.Programmes = append(result.Programmes, doc.Programmes...)
+	}
+
+	return result, nil
 }
 
 func timeIsInRange(xmltvTime *xmltv.Time, start time.Time, end time.Time) bool {
@@ -71,16 +92,17 @@ func programmeIsInRange(programme xmltv.Programme, start time.Time, end time.Tim
 	return startIsInRange || stopIsInRange || fullOverlap
 }
 
-func getContentForUrl(url string, lengthInDays int, offsetInDays int, now time.Time) (string, error) {
+func getContentForUrl(url string, lengthInDays int, offsetInDays int, now time.Time) (xmltv.EPG, error) {
+	var epg xmltv.EPG
+
 	body, err := downloadXml(url)
 	if err != nil {
-		return "", err
+		return epg, err
 	}
 
 	// Parse body into xmltv structure
-	var epg xmltv.EPG
 	if err := xml.Unmarshal(body, &epg); err != nil {
-		return "", err
+		return epg, err
 	}
 
 	// Remove all epg.Programme entries where the whole programme is outside the requested range
@@ -95,7 +117,7 @@ func getContentForUrl(url string, lengthInDays int, offsetInDays int, now time.T
 	epg.Programmes = filtered
 
 	// Marshal back to XML
-	return serializeXml(epg)
+	return epg, nil
 }
 
 func downloadXml(url string) ([]byte, error) {

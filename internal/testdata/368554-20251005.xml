@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tv SYSTEM "xmltv.dtd">
+
+<tv date="20251005080003 +0000" source-info-url="https://epg.pw/xmltv/epg_lite.xml" source-info-name="FREE EPG" generator-info-name="epg.pw" generator-info-url="https://epg.pw">
+  <channel id="368554">
+    <display-name lang="HK">港台电视35</display-name>
+    <icon src="" />
+  </channel>
+  <programme start="20251005000000 +0000" stop="20251005000000 +0000" channel="368554">
+    <title lang="zh">CGTN 英語頻道</title>
+    <date>20251005</date>
+    <audio>
+      <stereo>stereo</stereo>
+    </audio>
+  </programme>
+</tv>

@@ -1,0 +1,51 @@
+        	            	 <!DOCTYPE tv SYSTEM "xmltv.dtd">
+<tv date="20251005120000 +0000">
+  <channel id="533">
+    <display-name lang="MY">GOLD</display-name>
+    <icon src="https://epg.pw/media/images/epg/2024/06/09/20240609080606908149_86.png"></icon>
+  </channel>
+  <channel id="368554">
+    <display-name lang="HK">港台电视35</display-name>
+    <icon src=""></icon>
+  </channel>
+  <programme start="20251005000000 +0000" stop="20251005060000 +0000" channel="533">
+    <title lang="zh">SYOK GOLD : Mixture of &#39;50s to &#39;70s songs</title>
+    <desc>Great music, brings back memories</desc>
+    <date>20251005</date>
+    <audio>
+      <stereo>stereo</stereo>
+    </audio>
+  </programme>
+  <programme start="20251005060000 +0000" stop="20251005100000 +0000" channel="533">
+    <title lang="zh">SYOK GOLD : Mixture of &#39;50s to &#39;70s songs</title>
+    <desc>Let&#39;s open the door to the past, SYOK Gold</desc>
+    <date>20251005</date>
+    <audio>
+      <stereo>stereo</stereo>
+    </audio>
+  </programme>
+  <programme start="20251005100000 +0000" stop="20251005150000 +0000" channel="533">
+    <title lang="zh">SYOK GOLD : Mixture of &#39;50s to &#39;70s songs</title>
+    <desc>The past comes alive, on SYOK Gold</desc>
+    <date>20251005</date>
+    <audio>
+      <stereo>stereo</stereo>
+    </audio>
+  </programme>
+  <programme start="20251005150000 +0000" stop="20251005200000 +0000" channel="533">
+    <title lang="zh">SYOK GOLD : Mixture of &#39;50s to &#39;70s songs</title>
+    <desc>Relax &amp; enjoy , SYOK Gold</desc>
+    <date>20251005</date>
+    <audio>
+      <stereo>stereo</stereo>
+    </audio>
+  </programme>
+  <programme start="20251005200000 +0000" stop="20251006000000 +0000" channel="533">
+    <title lang="zh">SYOK GOLD : Mixture of &#39;50s to &#39;70s songs</title>
+    <desc>Great music, brings back memories</desc>
+    <date>20251005</date>
+    <audio>
+      <stereo>stereo</stereo>
+    </audio>
+  </programme>
+</tv>
