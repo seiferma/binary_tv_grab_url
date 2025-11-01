@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/seiferma/tvheadend/xmltv_url/internal"
 	"github.com/spf13/pflag"
@@ -76,7 +77,7 @@ func validateArgs(parsedArgs ParsedArgs) error {
 		return fmt.Errorf("cannot use --description and --capabilities together")
 	}
 
-	if len(parsedArgs.URLs) < 1 && !parsedArgs.Description && !parsedArgs.Capabilities {
+	if (len(parsedArgs.URLs) < 1 || strings.TrimSpace(parsedArgs.URLs[0]) == "") && !parsedArgs.Description && !parsedArgs.Capabilities {
 		return fmt.Errorf("at least one URL must be provided unless --description or --capabilities is used")
 	}
 
