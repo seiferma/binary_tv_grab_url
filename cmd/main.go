@@ -102,12 +102,12 @@ func executeBusinessLogic(parsedArgs ParsedArgs, logic internal.Logic) error {
 		return fmt.Errorf("error: missing required positional argument 'url'")
 	}
 
-	request := internal.Request{
-		URLs:         parsedArgs.URLs,
-		LengthInDays: parsedArgs.Days,
-		OffsetInDays: parsedArgs.Offset,
-		Quiet:        parsedArgs.Quiet,
-	}
+	request := internal.CreateRequest(
+		parsedArgs.URLs,
+		parsedArgs.Days,
+		parsedArgs.Offset,
+		parsedArgs.Quiet,
+	)
 	content, err := logic.GetContentFunc(request)
 	if err != nil {
 		return fmt.Errorf("error: %v", err)

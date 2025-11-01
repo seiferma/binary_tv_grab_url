@@ -31,6 +31,16 @@ type Request struct {
 	GetNowFunc   func() time.Time
 }
 
+func CreateRequest(urls []string, lengthInDays int, offsetInDays int, quiet bool) Request {
+	return Request{
+		URLs:         urls,
+		LengthInDays: lengthInDays,
+		OffsetInDays: offsetInDays,
+		Quiet:        quiet,
+		GetNowFunc:   time.Now,
+	}
+}
+
 func GetLogic() Logic {
 	return Logic{
 		GetDescriptionFunc:  getDescription,
