@@ -90,18 +90,6 @@ func mergeXml(xmlDocuments []xmltv.EPG, now time.Time) (xmltv.EPG, error) {
 	return result, nil
 }
 
-func timeIsInRange(xmltvTime *xmltv.Time, start time.Time, end time.Time) bool {
-	time := xmltvTime.Time
-	return time.After(start) && time.Before(end)
-}
-
-func programmeIsInRange(programme xmltv.Programme, start time.Time, end time.Time) bool {
-	startIsInRange := timeIsInRange(&programme.Start, start, end)
-	stopIsInRange := timeIsInRange(programme.Stop, start, end)
-	fullOverlap := programme.Start.Time.Before(start) && programme.Stop.After(end)
-	return startIsInRange || stopIsInRange || fullOverlap
-}
-
 func getContentForUrl(url string, lengthInDays int, offsetInDays int, now time.Time) (xmltv.EPG, error) {
 	var epg xmltv.EPG
 
@@ -181,6 +169,7 @@ func serializeXml(epg xmltv.EPG) (string, error) {
 	return string(header) + string(out), nil
 }
 
+// start is inclusive, end is exclusive
 func calculateProgrammeTimeRange(now time.Time, offsetInDays int, lengthInDays int) (time.Time, time.Time) {
 	offsetDuration := time.Duration(max(offsetInDays, MIN_OFFSET_IN_DAYS)) * ONE_DAY
 	lengthDuration := time.Duration(MAX_LENGTH_IN_DAYS) * ONE_DAY
@@ -190,4 +179,23 @@ func calculateProgrammeTimeRange(now time.Time, offsetInDays int, lengthInDays i
 	earliest := now.Truncate(ONE_DAY).Add(offsetDuration)
 	latest := earliest.Add(lengthDuration)
 	return earliest, latest
+}
+
+// start is inclusive, end is exclusive
+func programmeIsInRange(programme xmltv.Programme, start time.Time, end time.Time) bool {
+	programmeStart := programme.Start.Time
+	programmeStop := programme.Stop.Time
+
+	startIsInRange := afterOrEqual(programmeStart, start) && programmeStart.Before(end)
+	stopIsInRange := programmeStop.After(start) && programmeStop.Before(end)
+	fullOverlap := beforeOrEqual(programmeStart, start) && afterOrEqual(programmeStop, end)
+	return startIsInRange || stopIsInRange || fullOverlap
+}
+
+func beforeOrEqual(op1, op2 time.Time) bool {
+	return op1.Equal(op2) || op1.Before(op2)
+}
+
+func afterOrEqual(op1, op2 time.Time) bool {
+	return op1.Equal(op2) || op1.After(op2)
 }

@@ -48,4 +48,11 @@
       <stereo>stereo</stereo>
     </audio>
   </programme>
+  <programme start="20251005000000 +0000" stop="20251006000000 +0000" channel="368554">
+   <title lang="zh">CGTN 英語頻道</title>
+   <date>20251005</date>
+   <audio>
+     <stereo>stereo</stereo>
+   </audio>
+ </programme>
 </tv>
